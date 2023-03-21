@@ -1,0 +1,68 @@
+{% block content %}
+  <div id="calendar"></div>
+{% endblock %}
+
+{% block styles %}
+  <style>
+    /* make calendar smaller */
+    #calendar {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    #calendar {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* change the color of weekends */
+    .fc-sat, .fc-sun {
+        background-color: #f4e7b7;
+        color: #000;
+    }
+
+    .reservation-count {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 16px;
+    }
+  </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet" />
+<script>
+    $(document).ready(function() {
+  $('#calendar').fullCalendar({
+    dayClick: function(date) {
+      if (date.isoWeekday() === 6 || date.isoWeekday() === 7) {
+        var formattedDate = moment(date).format('YYYY-MM-DD');
+        window.location.href = '/reservation?date=' + formattedDate;
+      }
+    },
+    events: [
+      {% for reservation in reservations %}
+        {
+          title: parseInt('{{ reservation.adults }}') + parseInt('{{ reservation.children }}'),
+          start: '{{ reservation.date }}',
+          color: '{% if reservation.is_full %}red{% elif reservation.is_partial %}orange{% else %}green{% endif %}',
+          adults: '{{ reservation.adults }}',
+          children: '{{ reservation.children }}'
+        },
+      {% endfor %}
+    ],
+    validRange: function(nowDate) {
+        return {
+          start: nowDate,
+          end: moment().add(1, 'year'),
+        };
+      },
+  });
+});
+</script>
+{% endblock %}

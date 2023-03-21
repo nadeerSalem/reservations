@@ -1,0 +1,13 @@
+{% block title %} New Reservation {% endblock %}
+
+{% block content %}
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit", name="save">Send Reservation</button>
+
+</form>
+
+{% endblock %}
+
